@@ -49,6 +49,46 @@ async def player_autocomplete(
         return []
 
 
+class ReportStartModal(discord.ui.Modal):
+
+    def __init__(self, tournament):
+        super().__init__(title=f"{tournament} Report")
+
+        self.tournament = tournament
+
+        self.team_number = discord.ui.TextInput(
+            label="Team Number",
+            required=True
+        )
+
+        self.map_number = discord.ui.TextInput(
+            label="Map Number",
+            required=True
+        )
+
+        self.add_item(self.team_number)
+        self.add_item(self.map_number)
+
+    async def on_submit(self, interaction: discord.Interaction):
+
+        team = get_team(self.team_number.value)
+
+        if not team:
+            await interaction.response.send_message(
+                "❌ Team not found.",
+                ephemeral=True
+            )
+            return
+
+        await interaction.response.send_modal(
+            ReportModal(
+                team=team,
+                map_number=int(self.map_number.value),
+                tournament=self.tournament
+            )
+        )
+
+
 class ReportModal(discord.ui.Modal):
 
     def __init__(
