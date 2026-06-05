@@ -91,84 +91,21 @@ class ReportStartModal(discord.ui.Modal):
 
 class ReportModal(discord.ui.Modal):
 
-    def __init__(
-        self,
-        team,
-        map_number: int,
-        tournament: str
-    ):
+    def __init__(self, team, map_number, tournament):
+        super().__init__(title="Match Report")
 
-        super().__init__(
-            title="Match Report"
-        )
-
-        self.team = team
-        self.map_number = map_number
-        self.tournament = tournament
-
-        self.player1_input = discord.ui.TextInput(
-            label=f"{str(team['Player 1'])[:35]} Kills",
+        self.test_input = discord.ui.TextInput(
+            label="Kills",
             required=True
         )
 
-        self.player2_input = discord.ui.TextInput(
-            label=f"{str(team['Player 2'])[:35]} Kills",
-            required=True
+        self.add_item(self.test_input)
+
+    async def on_submit(self, interaction):
+        await interaction.response.send_message(
+            "Modal works!",
+            ephemeral=True
         )
-
-        self.player3_input = discord.ui.TextInput(
-            label=f"{str(team['Player 3'])[:35]} Kills",
-            required=True
-        )
-
-        self.player4_input = discord.ui.TextInput(
-            label=f"{str(team['Player 4'])[:35]} Kills",
-            required=True
-        )
-
-        self.placement_input = discord.ui.TextInput(
-            label="Placement",
-            required=True
-        )
-
-        self.add_item(self.player1_input)
-        self.add_item(self.player2_input)
-        self.add_item(self.player3_input)
-        self.add_item(self.player4_input)
-        self.add_item(self.placement_input)
-
-    async def on_submit(
-        self,
-        interaction: discord.Interaction
-    ):
-        try:
-
-            await interaction.response.defer(
-                ephemeral=True
-            )
-
-            append_report(
-                reporter=interaction.user.name,
-                tournament=self.tournament,
-                team_number=self.team["Team Number"],
-                map_number=self.map_number,
-                p1_kills=int(self.player1_input.value),
-                p2_kills=int(self.player2_input.value),
-                p3_kills=int(self.player3_input.value),
-                p4_kills=int(self.player4_input.value),
-                placement=int(self.placement_input.value)
-            )
-
-            await interaction.followup.send(
-                f"✅ {self.tournament} report submitted successfully.",
-                ephemeral=True
-            )
-
-        except Exception as e:
-            await interaction.followup.send(
-                f"❌ Error: {e}",
-                ephemeral=True
-            )
 
 
 @bot.tree.command(name="registerteam", description="Register a new team")
