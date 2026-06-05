@@ -84,7 +84,6 @@ class ReportStartModal(discord.ui.Modal):
     "Modal 1 submitted successfully",
     ephemeral=True
 )
-        )
 
 
 class ReportModal(discord.ui.Modal):
