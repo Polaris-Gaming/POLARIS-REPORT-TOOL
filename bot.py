@@ -97,44 +97,45 @@ class ReportModal(discord.ui.Modal):
         map_number: int,
         tournament: str
     ):
+
         super().__init__(
-    title=f"{tournament} Report"
+            title="Match Report"
         )
 
         self.team = team
         self.map_number = map_number
         self.tournament = tournament
 
-    self.player1_input = discord.ui.TextInput(
-        label=f"{str(team['Player 1'])[:35]} Kills",
-        required=True
+        self.player1_input = discord.ui.TextInput(
+            label=f"{str(team['Player 1'])[:35]} Kills",
+            required=True
         )
 
-    self.player2_input = discord.ui.TextInput(
-        label=f"{str(team['Player 2'])[:35]} Kills",
-        required=True
+        self.player2_input = discord.ui.TextInput(
+            label=f"{str(team['Player 2'])[:35]} Kills",
+            required=True
         )
 
-    self.player3_input = discord.ui.TextInput(
-        label=f"{str(team['Player 3'])[:35]} Kills",
-        required=True
+        self.player3_input = discord.ui.TextInput(
+            label=f"{str(team['Player 3'])[:35]} Kills",
+            required=True
         )
 
-    self.player4_input = discord.ui.TextInput(
-        label=f"{str(team['Player 4'])[:35]} Kills",
-        required=True
+        self.player4_input = discord.ui.TextInput(
+            label=f"{str(team['Player 4'])[:35]} Kills",
+            required=True
         )
 
-    self.placement_input = discord.ui.TextInput(
-        label="Placement",
-        required=True
+        self.placement_input = discord.ui.TextInput(
+            label="Placement",
+            required=True
         )
 
-    self.add_item(self.player1_input)
-    self.add_item(self.player2_input)
-    self.add_item(self.player3_input)
-    self.add_item(self.player4_input)
-    self.add_item(self.placement_input)
+        self.add_item(self.player1_input)
+        self.add_item(self.player2_input)
+        self.add_item(self.player3_input)
+        self.add_item(self.player4_input)
+        self.add_item(self.placement_input)
 
     async def on_submit(
         self,
