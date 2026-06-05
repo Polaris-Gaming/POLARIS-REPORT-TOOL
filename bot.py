@@ -385,12 +385,13 @@ async def on_app_command_error(interaction: discord.Interaction, error):
 @bot.event
 async def on_ready():
     synced = await bot.tree.sync()
-    try:
-        count = refresh_validated_players_cache()
-        print(f"Loaded {count} validated players into cache.")
-    except Exception as e:
-        print(f"Failed to preload validated players: {e}")
-    print(f"Bot is online! Synced {len(synced)} global command(s).")
+
+    print("===== COMMANDS =====")
+    for cmd in synced:
+        print(cmd.name)
+
+    print("====================")
+    print(f"Synced {len(synced)} commands")
 
 
 bot.run(TOKEN)
