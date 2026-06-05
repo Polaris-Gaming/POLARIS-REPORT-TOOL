@@ -130,11 +130,11 @@ class ReportModal(discord.ui.Modal):
         required=True
         )
 
-        self.add_item(self.player1_input)
-        self.add_item(self.player2_input)
-        self.add_item(self.player3_input)
-        self.add_item(self.player4_input)
-        self.add_item(self.placement_input)
+    self.add_item(self.player1_input)
+    self.add_item(self.player2_input)
+    self.add_item(self.player3_input)
+    self.add_item(self.player4_input)
+    self.add_item(self.placement_input)
 
     async def on_submit(
         self,
