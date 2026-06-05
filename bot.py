@@ -98,32 +98,32 @@ class ReportModal(discord.ui.Modal):
         tournament: str
     ):
         super().__init__(
-            title=f"{tournament} | Team {team['Team Number']} | Map {map_number}"
-        )
+    title=f"{tournament} Report"
+)
 
         self.team = team
         self.map_number = map_number
         self.tournament = tournament
 
-        self.player1_input = discord.ui.TextInput(
-            label=f"{team['Player 1']} Kills",
-            required=True
-        )
+    self.player1_input = discord.ui.TextInput(
+        label=f"{str(team['Player 1'])[:35]} Kills",
+        required=True
+)
 
-        self.player2_input = discord.ui.TextInput(
-            label=f"{team['Player 2']} Kills",
-            required=True
-        )
+    self.player2_input = discord.ui.TextInput(
+        label=f"{str(team['Player 2'])[:35]} Kills",
+        required=True
+)
 
-        self.player3_input = discord.ui.TextInput(
-            label=f"{team['Player 3']} Kills",
-            required=True
-        )
+    self.player3_input = discord.ui.TextInput(
+        label=f"{str(team['Player 3'])[:35]} Kills",
+        required=True
+)
 
-        self.player4_input = discord.ui.TextInput(
-            label=f"{team['Player 4']} Kills",
-            required=True
-        )
+    self.player4_input = discord.ui.TextInput(
+        label=f"{str(team['Player 4'])[:35]} Kills",
+        required=True
+)
 
         self.placement_input = discord.ui.TextInput(
             label="Placement",
