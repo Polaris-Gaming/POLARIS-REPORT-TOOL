@@ -212,18 +212,6 @@ async def refreshplayers(interaction: discord.Interaction):
     name="registerteam",
     description="Register a new team"
 )
-@app_commands.describe(
-    player1="Player 1",
-    player2="Player 2",
-    player3="Player 3",
-    player4="Player 4"
-)
-@app_commands.autocomplete(
-    player1=player_autocomplete,
-    player2=player_autocomplete,
-    player3=player_autocomplete,
-    player4=player_autocomplete
-)
 async def registerteam(
     interaction: discord.Interaction,
     player1: str,
@@ -242,6 +230,12 @@ async def registerteam(
 
         await interaction.response.send_message(
             f"✅ Team registered successfully!\n\nTeam Number: **{team_number}**",
+            ephemeral=True
+        )
+
+    except Exception as e:
+        await interaction.response.send_message(
+            f"❌ Error registering team: {e}",
             ephemeral=True
         )
 
