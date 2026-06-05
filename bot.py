@@ -212,6 +212,18 @@ async def refreshplayers(interaction: discord.Interaction):
     name="registerteam",
     description="Register a new team"
 )
+@app_commands.describe(
+    player1="Player 1",
+    player2="Player 2",
+    player3="Player 3",
+    player4="Player 4"
+)
+@app_commands.autocomplete(
+    player1=player_autocomplete,
+    player2=player_autocomplete,
+    player3=player_autocomplete,
+    player4=player_autocomplete
+)
 async def registerteam(
     interaction: discord.Interaction,
     player1: str,
@@ -221,6 +233,39 @@ async def registerteam(
 ):
     try:
 
+        players = [
+            player1.strip(),
+            player2.strip(),
+            player3.strip(),
+            player4.strip()
+        ]
+
+        # Prevent duplicate players
+        if len(set(players)) != 4:
+            await interaction.response.send_message(
+                "❌ Duplicate players are not allowed on a team.",
+                ephemeral=True
+            )
+            return
+
+        # Load validated players
+        valid_players = get_validated_players(use_cache=True)
+
+        # Validate every player exists
+        invalid_players = [
+            player for player in players
+            if player not in valid_players
+        ]
+
+        if invalid_players:
+            await interaction.response.send_message(
+                "❌ The following player(s) are not in the validated player list:\n\n"
+                + "\n".join(invalid_players),
+                ephemeral=True
+            )
+            return
+
+        # Register team
         team_number = register_team(
             player1,
             player2,
@@ -229,13 +274,12 @@ async def registerteam(
         )
 
         await interaction.response.send_message(
-            f"✅ Team registered successfully!\n\nTeam Number: **{team_number}**",
-            ephemeral=True
-        )
-
-    except Exception as e:
-        await interaction.response.send_message(
-            f"❌ Error registering team: {e}",
+            f"✅ Team registered successfully!\n\n"
+            f"**Team Number:** {team_number}\n\n"
+            f"**Player 1:** {player1}\n"
+            f"**Player 2:** {player2}\n"
+            f"**Player 3:** {player3}\n"
+            f"**Player 4:** {player4}",
             ephemeral=True
         )
 
