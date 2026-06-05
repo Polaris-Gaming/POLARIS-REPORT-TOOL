@@ -221,6 +221,7 @@ def set_team_closed_status(team_number, closed: bool):
 
 
 def append_report(
+    tournament,
     reporter,
     team_number,
     map_number,
@@ -245,6 +246,7 @@ def append_report(
 
     row_data = {
         "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "Tournament": str(tournament).strip(),
         "Reporter": str(reporter).strip(),
         "Team Number": str(team_number).strip(),
         "Map Number": str(map_number).strip(),
