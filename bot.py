@@ -140,20 +140,20 @@ class ReportModal(discord.ui.Modal):
         )
 
         self.p1 = discord.ui.TextInput(
-            label="P1 Kills"
-        )
+    label=f"{self.team['Player 1']} Kills"
+)
 
-        self.p2 = discord.ui.TextInput(
-            label="P2 Kills"
-        )
+self.p2 = discord.ui.TextInput(
+    label=f"{self.team['Player 2']} Kills"
+)
 
-        self.p3 = discord.ui.TextInput(
-            label="P3 Kills"
-        )
+self.p3 = discord.ui.TextInput(
+    label=f"{self.team['Player 3']} Kills"
+)
 
-        self.p4 = discord.ui.TextInput(
-            label="P4 Kills"
-        )
+self.p4 = discord.ui.TextInput(
+    label=f"{self.team['Player 4']} Kills"
+)
 
         self.add_item(self.placement)
         self.add_item(self.p1)
