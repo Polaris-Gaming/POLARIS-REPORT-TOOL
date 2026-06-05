@@ -80,12 +80,10 @@ class ReportStartModal(discord.ui.Modal):
             )
             return
 
-        await interaction.response.send_modal(
-            ReportModal(
-                team=team,
-                map_number=int(self.map_number.value),
-                tournament=self.tournament
-            )
+        await interaction.response.send_message(
+    "Modal 1 submitted successfully",
+    ephemeral=True
+)
         )
 
 
