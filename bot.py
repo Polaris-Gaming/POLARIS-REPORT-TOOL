@@ -209,6 +209,57 @@ async def refreshplayers(interaction: discord.Interaction):
 
 
 @bot.tree.command(
+    name="registerteam",
+    description="Register a new team"
+)
+@app_commands.describe(
+    player1="Player 1",
+    player2="Player 2",
+    player3="Player 3",
+    player4="Player 4"
+)
+@app_commands.autocomplete(
+    player1=player_autocomplete,
+    player2=player_autocomplete,
+    player3=player_autocomplete,
+    player4=player_autocomplete
+)
+async def registerteam(
+    interaction: discord.Interaction,
+    player1: str,
+    player2: str,
+    player3: str,
+    player4: str
+):
+    try:
+
+        team_number = register_team(
+            player1,
+            player2,
+            player3,
+            player4
+        )
+
+        await interaction.response.send_message(
+            f"✅ Team registered successfully!\n\nTeam Number: **{team_number}**",
+            ephemeral=True
+        )
+
+    except Exception as e:
+
+        if interaction.response.is_done():
+            await interaction.followup.send(
+                f"❌ Error registering team: {e}",
+                ephemeral=True
+            )
+        else:
+            await interaction.response.send_message(
+                f"❌ Error registering team: {e}",
+                ephemeral=True
+            )
+
+
+@bot.tree.command(
     name="br_report",
     description="Submit BR Report"
 )
