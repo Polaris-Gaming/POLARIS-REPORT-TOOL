@@ -52,7 +52,7 @@ async def player_autocomplete(
 class ReportStartModal(discord.ui.Modal):
 
     def __init__(self, tournament):
-        super().__init__(title=f"{tournament} Report")
+        super().__init__(title="Start Report")
 
         self.tournament = tournament
 
@@ -80,96 +80,115 @@ class ReportStartModal(discord.ui.Modal):
             )
             return
 
+        view = ReportContinueView(
+            tournament=self.tournament,
+            team=team,
+            map_number=self.map_number.value
+        )
+
         await interaction.response.send_message(
-    "Modal 1 submitted successfully",
-    ephemeral=True
-)
+            f"✅ Team {self.team_number.value} | Map {self.map_number.value}\n\nClick below to enter results.",
+            view=view,
+            ephemeral=True
+        )
+
+
+class ReportContinueView(discord.ui.View):
+
+    def __init__(self, tournament, team, map_number):
+        super().__init__(timeout=300)
+
+        self.tournament = tournament
+        self.team = team
+        self.map_number = map_number
+
+    @discord.ui.button(
+        label="Enter Results",
+        style=discord.ButtonStyle.green
+    )
+    async def enter_results(
+        self,
+        interaction: discord.Interaction,
+        button: discord.ui.Button
+    ):
+
+        await interaction.response.send_modal(
+            ReportModal(
+                tournament=self.tournament,
+                team=self.team,
+                map_number=self.map_number
+            )
+        )
 
 
 class ReportModal(discord.ui.Modal):
 
-    def __init__(self, team, map_number, tournament):
-        super().__init__(title="Match Report")
+    def __init__(
+        self,
+        tournament,
+        team,
+        map_number
+    ):
+        super().__init__(title="Match Results")
 
-        self.test_input = discord.ui.TextInput(
-            label="Kills",
-            required=True
+        self.tournament = tournament
+        self.team = team
+        self.map_number = map_number
+
+        self.placement = discord.ui.TextInput(
+            label="Placement"
         )
 
-        self.add_item(self.test_input)
-
-    async def on_submit(self, interaction):
-        await interaction.response.send_message(
-            "Modal works!",
-            ephemeral=True
+        self.p1 = discord.ui.TextInput(
+            label="P1 Kills"
         )
 
+        self.p2 = discord.ui.TextInput(
+            label="P2 Kills"
+        )
 
-@bot.tree.command(name="registerteam", description="Register a new team")
-@app_commands.describe(
-    player1="Select Player 1",
-    player2="Select Player 2",
-    player3="Select Player 3",
-    player4="Select Player 4"
-)
-@app_commands.autocomplete(
-    player1=player_autocomplete,
-    player2=player_autocomplete,
-    player3=player_autocomplete,
-    player4=player_autocomplete
-)
-async def registerteam(
-    interaction: discord.Interaction,
-    player1: str,
-    player2: str,
-    player3: str,
-    player4: str
-):
-    try:
-        await interaction.response.defer(ephemeral=True)
+        self.p3 = discord.ui.TextInput(
+            label="P3 Kills"
+        )
 
-        validated_players = get_validated_players(use_cache=True)
-        validated_lookup = {name.lower(): name for name in validated_players}
+        self.p4 = discord.ui.TextInput(
+            label="P4 Kills"
+        )
 
-        submitted = [player1, player2, player3, player4]
+        self.add_item(self.placement)
+        self.add_item(self.p1)
+        self.add_item(self.p2)
+        self.add_item(self.p3)
+        self.add_item(self.p4)
 
-        normalized = []
-        for player in submitted:
-            key = player.strip().lower()
-            if key not in validated_lookup:
-                await interaction.followup.send(
-                    f"❌ '{player}' is not in the validated player list.",
-                    ephemeral=True
-                )
-                return
-            normalized.append(validated_lookup[key])
+    async def on_submit(
+        self,
+        interaction: discord.Interaction
+    ):
+        try:
 
-        if len(set(name.lower() for name in normalized)) != 4:
-            await interaction.followup.send(
-                "❌ Each player must be unique. You selected a duplicate.",
+            append_report(
+                reporter=interaction.user.name,
+                tournament=self.tournament,
+                team_number=self.team["Team Number"],
+                map_number=self.map_number,
+                p1_kills=int(self.p1.value),
+                p2_kills=int(self.p2.value),
+                p3_kills=int(self.p3.value),
+                p4_kills=int(self.p4.value),
+                placement=int(self.placement.value)
+            )
+
+            await interaction.response.send_message(
+                f"✅ {self.tournament} report submitted successfully.",
                 ephemeral=True
             )
-            return
 
-        new_team_number = register_team(
-            normalized[0],
-            normalized[1],
-            normalized[2],
-            normalized[3]
-        )
-
-        await interaction.followup.send(
-            f"🎉 **Team Registered Successfully!**\n\n"
-            f"**Team Number:** {new_team_number}\n"
-            f"**Players:** {normalized[0]}, {normalized[1]}, {normalized[2]}, {normalized[3]}",
-            ephemeral=True
-        )
-
-    except Exception as e:
-        await interaction.followup.send(
-            f"❌ Error: {e}",
-            ephemeral=True
-        )
+        except Exception as e:
+            await interaction.response.send_message(
+                f"❌ Error: {e}",
+                ephemeral=True
+            )
 
 
 @bot.tree.command(name="refreshplayers", description="Refresh validated player list from Google Sheets")
