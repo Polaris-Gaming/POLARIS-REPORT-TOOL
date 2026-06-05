@@ -234,10 +234,10 @@ async def br_report(
 async def resurgence_report(
     interaction: discord.Interaction
 ):
-
-    await interaction.response.send_modal(
-        ReportStartModal("Resurgence")
-    )
+    try:
+        await interaction.response.send_modal(
+            ReportStartModal("Resurgence")
+        )
 
     except Exception as e:
         if interaction.response.is_done():
