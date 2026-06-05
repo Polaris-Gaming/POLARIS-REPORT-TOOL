@@ -50,27 +50,41 @@ async def player_autocomplete(
 
 
 class ReportModal(discord.ui.Modal):
-    def __init__(self, team, map_number: int):
-        super().__init__(title=f"Report - Team {team['Team Number']} | Map {map_number}")
+
+    def __init__(
+        self,
+        team,
+        map_number: int,
+        tournament: str
+    ):
+        super().__init__(
+            title=f"{tournament} | Team {team['Team Number']} | Map {map_number}"
+        )
+
         self.team = team
         self.map_number = map_number
+        self.tournament = tournament
 
         self.player1_input = discord.ui.TextInput(
             label=f"{team['Player 1']} Kills",
             required=True
         )
+
         self.player2_input = discord.ui.TextInput(
             label=f"{team['Player 2']} Kills",
             required=True
         )
+
         self.player3_input = discord.ui.TextInput(
             label=f"{team['Player 3']} Kills",
             required=True
         )
+
         self.player4_input = discord.ui.TextInput(
             label=f"{team['Player 4']} Kills",
             required=True
         )
+
         self.placement_input = discord.ui.TextInput(
             label="Placement",
             required=True
@@ -82,12 +96,19 @@ class ReportModal(discord.ui.Modal):
         self.add_item(self.player4_input)
         self.add_item(self.placement_input)
 
-    async def on_submit(self, interaction: discord.Interaction):
+    async def on_submit(
+        self,
+        interaction: discord.Interaction
+    ):
         try:
-            await interaction.response.defer(ephemeral=True)
+
+            await interaction.response.defer(
+                ephemeral=True
+            )
 
             append_report(
                 reporter=interaction.user.name,
+                tournament=self.tournament,
                 team_number=self.team["Team Number"],
                 map_number=self.map_number,
                 p1_kills=int(self.player1_input.value),
@@ -98,15 +119,10 @@ class ReportModal(discord.ui.Modal):
             )
 
             await interaction.followup.send(
-                f"✅ Report submitted for Team {self.team['Team Number']} | Map {self.map_number}",
+                f"✅ {self.tournament} report submitted successfully.",
                 ephemeral=True
             )
 
-        except ValueError:
-            await interaction.followup.send(
-                "❌ Kills and placement must be numbers only.",
-                ephemeral=True
-            )
         except Exception as e:
             await interaction.followup.send(
                 f"❌ Error: {e}",
@@ -198,29 +214,30 @@ async def refreshplayers(interaction: discord.Interaction):
         )
 
 
-@bot.tree.command(name="report", description="Submit match report")
-@app_commands.describe(
-    team_number="Enter the team number",
-    map_number="Enter the map number"
+@bot.tree.command(
+    name="br_report",
+    description="Submit BR Report"
 )
-async def report(
-    interaction: discord.Interaction,
-    team_number: str,
-    map_number: int
+async def br_report(
+    interaction: discord.Interaction
 ):
-    try:
-        team = get_team(team_number)
 
-        if not team:
-            await interaction.response.send_message(
-                "❌ Team not found.",
-                ephemeral=True
-            )
-            return
+    await interaction.response.send_modal(
+        ReportStartModal("BR")
+    )
 
-        await interaction.response.send_modal(
-            ReportModal(team, map_number)
-        )
+
+@bot.tree.command(
+    name="resurgence_report",
+    description="Submit Resurgence Report"
+)
+async def resurgence_report(
+    interaction: discord.Interaction
+):
+
+    await interaction.response.send_modal(
+        ReportStartModal("Resurgence")
+    )
 
     except Exception as e:
         if interaction.response.is_done():
